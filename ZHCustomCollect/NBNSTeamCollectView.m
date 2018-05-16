@@ -63,18 +63,29 @@ NSInteger implicitTagForView(UIView *aView){
             make.edges.equalTo(self);
             make.width.height.equalTo(self);
         }];
-        [self.scrollWrapper addSubview:self.contentView];
-        [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.mas_equalTo(0);
-            make.width.equalTo(self.scrollWrapper);
-            make.height.equalTo(self).priority(900);
-        }];
+        self.scrollEnabel = NO;
     }
     return self;
 }
 
 - (void)setScrollEnabel:(BOOL)scrollEnabel{
     _scrollWrapper.scrollEnabled = scrollEnabel;
+    if (_contentView.superview) {
+        [_contentView removeFromSuperview];
+    }
+    if (scrollEnabel) {
+        [self.scrollWrapper addSubview:self.contentView];
+        [self.contentView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.edges.mas_equalTo(0);
+            make.width.equalTo(self.scrollWrapper);
+            make.height.equalTo(self).priority(900);
+        }];
+    }else{
+        [self addSubview:self.contentView];
+        [self.contentView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.edges.mas_equalTo(0);
+        }];
+    }
 }
 - (BOOL)scrollEnabel{
     return _scrollWrapper.scrollEnabled;
